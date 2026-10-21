@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mazzo dei casi — allenamento esame</title>
+<style>
+:root{--bg:#faf7f2;--card:#fff;--ink:#2e2a26;--muted:#857d73;--line:#e8e1d6;--accent:#5b7d6e;--accent-ink:#fff;--stop:#b5523b;--chip:#f1ece3;--back1:#5b7d6e;--back2:#4d6c5f;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1d1b19;--card:#2b2825;--ink:#eee8de;--muted:#9c948a;--line:#3b3733;--accent:#7fa391;--accent-ink:#12201a;--stop:#d9755d;--chip:#34302c;--back1:#4d6c5f;--back2:#3f594e;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1d1b19;--card:#2b2825;--ink:#eee8de;--muted:#9c948a;--line:#3b3733;--accent:#7fa391;--accent-ink:#12201a;--stop:#d9755d;--chip:#34302c;--back1:#4d6c5f;--back2:#3f594e;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.4;padding:14px 10px 40px}
+.wrap{max-width:420px;margin:0 auto;text-align:center}
+h1{font-size:1.2rem;margin:4px 0 2px;font-weight:650}
+.sub{color:var(--muted);font-size:.85rem;margin:0 0 14px}
+.deck{position:relative;width:min(78vw,290px);aspect-ratio:3/4;margin:6px auto 18px;perspective:1000px}
+.deck .pile{position:absolute;inset:0;border-radius:18px;background:var(--back2);border:1px solid rgba(0,0,0,.15)}
+.deck{cursor:pointer;-webkit-tap-highlight-color:transparent;outline-offset:6px;isolation:isolate}
+.mover{position:absolute;inset:0;pointer-events:none;animation:toBottom .75s cubic-bezier(.45,.05,.4,1) forwards}
+.mover .card{transition:none}
+@keyframes toBottom{0%{transform:translate(0,0) rotate(0);z-index:3;opacity:1}35%{transform:translate(80%,-8%) rotate(9deg);z-index:3;opacity:1}36%{z-index:-1}80%{opacity:1}100%{transform:translate(10px,10px) rotate(0);z-index:-1;opacity:0}}
+.deck .p1{transform:translate(7px,7px)}
+.deck .p2{transform:translate(4px,4px)}
+.deck .p3{transform:translate(1.5px,1.5px)}
+.card{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.3,.7,.3,1)}
+.card.flip{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;border-radius:18px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+.back{background:repeating-linear-gradient(45deg,var(--back1) 0 12px,var(--back2) 12px 24px);display:flex;align-items:center;justify-content:center;font-size:3.2rem;border:6px solid var(--card)}
+.front{background:var(--card);transform:rotateY(180deg);border:1px solid var(--line);padding:14px 16px;display:flex;flex-direction:column;text-align:left}
+.front h2{margin:0 0 8px;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:650}
+.attr{flex:1;display:flex;flex-direction:column;justify-content:center;padding-left:10px;border-left:4px solid;border-bottom:1px solid var(--line);margin-left:0}
+.attr:last-child{border-bottom:none}
+.attr small{font-size:.66rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.attr b{font-size:1.15rem;font-weight:650;line-height:1.15}
+.left{color:var(--muted);font-size:.8rem;margin-bottom:6px}
+.front.theory{justify-content:center;align-items:center;t
