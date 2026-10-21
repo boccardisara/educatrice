@@ -35,4 +35,209 @@ h1{font-size:1.2rem;margin:4px 0 2px;font-weight:650}
 .attr small{font-size:.66rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
 .attr b{font-size:1.15rem;font-weight:650;line-height:1.15}
 .left{color:var(--muted);font-size:.8rem;margin-bottom:6px}
-.front.theory{justify-content:center;align-items:center;t
+.front.theory{justify-content:center;align-items:center;text-align:center;border-top:6px solid hsl(160,45%,50%)}
+.front.theory small{font-size:.7rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.front.theory b{display:block;font-size:1.6rem;line-height:1.2;margin-top:12px;font-weight:700}
+.front.dog{border-top-color:hsl(28,65%,55%)}
+.timer{font-size:3rem;font-weight:700;font-variant-numeric:tabular-nums;margin:4px 0 0;letter-spacing:-.02em}
+.timer.run{color:var(--accent)}
+.hint{color:var(--muted);font-size:.82rem;min-height:1.2em;margin-bottom:4px}
+button{font:inherit;border:none;border-radius:12px;padding:13px 22px;font-weight:650;cursor:pointer;width:100%;max-width:340px;margin:6px auto;display:block}
+button:disabled{opacity:.4;cursor:not-allowed}
+#draw{background:var(--accent);color:var(--accent-ink)}
+#stop{background:var(--stop);color:#fff}
+.hist{margin-top:16px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 14px;font-size:.88rem;text-align:left}
+.hist h2{font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 6px}
+.row{display:flex;justify-content:space-between;gap:10px;padding:3px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:none}
+.row span:first-child{font-size:.78rem}
+.row span:last-child{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+/* ---- stile ThinkDog: arancione + blu notte ---- */
+:root{--bg:#fff;--card:#fff;--ink:#1b2b4b;--muted:#7a8497;--line:#ebe8e4;--accent:#ec6b12;--accent-ink:#fff;--stop:#ec6b12;--chip:#f3f1ee;--back1:#ec6b12;--back2:#e4531a;--theory-bg:#1b2b4b}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121c33;--card:#1b2b4b;--ink:#f4f1ec;--muted:#a3adc2;--line:#2c3d63;--accent:#f07a22;--stop:#f07a22;--chip:#24365a;--theory-bg:#0b1426}}
+:root[data-theme="dark"]{--bg:#121c33;--card:#1b2b4b;--ink:#f4f1ec;--muted:#a3adc2;--line:#2c3d63;--accent:#f07a22;--stop:#f07a22;--chip:#24365a;--theory-bg:#0b1426}
+body{font-family:"Raleway",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1{color:var(--accent);font-weight:800;font-size:1.7rem;letter-spacing:-.01em}
+.sub{font-weight:500;color:var(--ink)}
+.face{box-shadow:0 8px 22px rgba(27,43,75,.2)}
+.back{background:repeating-linear-gradient(45deg,var(--back1) 0 14px,#e85f10 14px 28px)}
+.front{border:none}
+.front h2{color:var(--accent);font-weight:800;font-size:.8rem}
+.attr{border-left-color:var(--accent)!important}
+.attr small{font-weight:700}
+.attr b{color:var(--ink);font-weight:800}
+.front.theory{background:var(--theory-bg);border:1px solid var(--line);border-top:1px solid var(--line)}
+.front.theory small{color:rgba(255,255,255,.7);font-weight:700}
+.front.theory b{color:#fff;font-weight:800}
+.front.dog{background:#ec6b12;border:none}
+.front.dog small{color:rgba(255,255,255,.88)}
+.timer{font-weight:800}
+button{border-radius:14px;text-transform:uppercase;letter-spacing:.03em;font-weight:800;box-shadow:0 6px 14px rgba(236,107,18,.28)}
+.hist{border-radius:16px}
+.back .logo{width:56%;height:auto;border-radius:50%;border:5px solid #fff;box-shadow:0 6px 16px rgba(27,43,75,.28);background:#fff}
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Raleway:wght@500;700;800&display=swap">
+</head>
+<body>
+<div class="wrap">
+  <h1>Mazzo dei casi 🃏</h1>
+  <p class="sub">Pesca: un caso, un concetto o un cane specifico. Ragiona ad alta voce, stop quando hai finito.</p>
+
+  <div class="deck" id="deck" role="button" tabindex="0" aria-label="Pesca una carta">
+    <div class="pile p1"></div><div class="pile p2"></div><div class="pile p3"></div>
+    <div class="card" id="card">
+      <div class="face back"><img class="logo" alt="" src="logo.png"></div>
+      <div class="face front" id="front"></div>
+    </div>
+  </div>
+  <div class="left" id="left"></div>
+
+  <div class="timer" id="timer">0.00</div>
+  <div class="hint" id="hint">Tocca il mazzo per pescare la prima carta.</div>
+  <button id="stop" disabled>⏹ Stop</button>
+
+  <div class="hist" id="hist" hidden>
+    <h2>Ultimi tentativi</h2>
+    <div id="rows"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+var ATTRS=[
+  {k:"Taglia",items:["Mini","Piccola","Media","Grande","Gigante"],hue:28},
+  {k:"Collaborativa",items:["Bassa","Media","Alta"],hue:95},
+  {k:"Problema",items:["Reattività","Paura"],hue:200},
+  {k:"Stimolo",items:["Cani","Persone","Oggetti grandi","Rumori"],hue:265},
+  {k:"Intensità",items:["Bassa","Media","Alta"],hue:345}
+];
+var TOTAL=ATTRS.reduce(function(a,x){return a*x.items.length;},1);
+var THEORY=["Circomplesso emozionale","Stato di flusso","Zona di sviluppo prossimale","C.L.A.⁴S.S.","S.C.O.R.E.","Spirale dei bisogni","Fasi del cucciolo","Cani primitivi","Aree protocollo sicurezza"];
+var DOGS=["Maui","Goffo","Maggy","Ramon","Athena","Milly","Kora","Adron"];
+var THEORY_P=0.25,DOG_P=0.2;
+var tdeck=[],ddeck=[],curT=null,curD=null;
+var deck=[],current=null,busy=false,running=false,t0=0,raf=0,history=[];
+var card=document.getElementById("card"),front=document.getElementById("front");
+var timerEl=document.getElementById("timer"),hint=document.getElementById("hint"),leftEl=document.getElementById("left");
+var deckEl=document.getElementById("deck"),stopBtn=document.getElementById("stop");
+
+function shuffle(){
+  deck=[];for(var i=0;i<TOTAL;i++)deck.push(i);
+  for(var j=deck.length-1;j>0;j--){var r=Math.floor(Math.random()*(j+1));var t=deck[j];deck[j]=deck[r];deck[r]=t;}
+}
+function shuffleT(){
+  tdeck=THEORY.slice();
+  for(var j=tdeck.length-1;j>0;j--){var r=Math.floor(Math.random()*(j+1));var t=tdeck[j];tdeck[j]=tdeck[r];tdeck[r]=t;}
+}
+function renderTheory(term){
+  front.className="face front theory";
+  front.innerHTML="";
+  var s=document.createElement("small");s.textContent="Teoria";
+  var b=document.createElement("b");b.textContent=term;
+  front.appendChild(s);front.appendChild(b);
+}
+function shuffleD(){
+  ddeck=DOGS.slice();
+  for(var j=ddeck.length-1;j>0;j--){var r=Math.floor(Math.random()*(j+1));var t=ddeck[j];ddeck[j]=ddeck[r];ddeck[r]=t;}
+}
+function renderDog(name){
+  front.className="face front theory dog";
+  front.innerHTML="";
+  var s=document.createElement("small");s.textContent="Cane";
+  var b=document.createElement("b");b.textContent=name;
+  front.appendChild(s);front.appendChild(b);
+}
+function decode(n){
+  var out=[];
+  for(var i=ATTRS.length-1;i>=0;i--){var len=ATTRS[i].items.length;out[i]=n%len;n=Math.floor(n/len);}
+  return out;
+}
+function render(pick){
+  front.innerHTML="";
+  front.className="face front";
+  var h=document.createElement("h2");h.textContent="Caso";front.appendChild(h);
+  ATTRS.forEach(function(a,i){
+    var d=document.createElement("div");d.className="attr";
+    d.style.borderLeftColor="hsl("+a.hue+",45%,55%)";
+    var s=document.createElement("small");s.textContent=a.k;
+    var b=document.createElement("b");b.textContent=a.items[pick[i]];
+    d.appendChild(s);d.appendChild(b);front.appendChild(d);
+  });
+}
+function updateLeft(){leftEl.textContent="Casi: "+deck.length+"/"+TOTAL+" · Teoria: "+tdeck.length+"/"+THEORY.length+" · Cani: "+ddeck.length+"/"+DOGS.length;}
+
+function sendToBottom(){
+  var deckNode=document.getElementById("deck");
+  var mv=document.createElement("div");mv.className="mover";
+  var cl=card.cloneNode(true);
+  var f=cl.querySelector("#front");if(f)f.removeAttribute("id");
+  mv.appendChild(cl);deckNode.appendChild(mv);
+  card.style.transition="none";card.classList.remove("flip");
+  void card.offsetWidth;card.style.transition="";
+  mv.addEventListener("animationend",function(){mv.remove();});
+  setTimeout(function(){if(mv.parentNode)mv.remove();},1000);
+}
+function draw(){
+  if(busy)return;
+  busy=true;stopBtn.disabled=true;
+  cancelAnimationFrame(raf);running=false;
+  timerEl.textContent="0.00";timerEl.classList.remove("run");
+  hint.textContent="Pesco…";
+  var wait=0;
+  if(card.classList.contains("flip")){wait=520;sendToBottom();}
+  setTimeout(function(){
+    var x=Math.random();curT=null;curD=null;
+    if(x<THEORY_P){
+      if(!tdeck.length)shuffleT();
+      curT=tdeck.pop();renderTheory(curT);
+    }else if(x<THEORY_P+DOG_P){
+      if(!ddeck.length)shuffleD();
+      curD=ddeck.pop();renderDog(curD);
+    }else{
+      if(!deck.length)shuffle();
+      current=decode(deck.pop());render(current);
+    }
+    updateLeft();
+    requestAnimationFrame(function(){
+      card.classList.add("flip");
+      setTimeout(startTimer,720);
+    });
+  },wait);
+}
+function fmt(ms){return (ms/1000).toFixed(2);}
+function startTimer(){
+  busy=false;running=true;t0=performance.now();
+  timerEl.classList.add("run");stopBtn.disabled=false;
+  hint.textContent=curT?"Spiega ad alta voce: cos’è, a cosa serve, un esempio.":curD?"Presenta questo cane: chi è, cosa ricordi, da dove partiresti.":"Pensa: che cosa osservi, quale bisogno, che primo passo?";
+  (function tick(){if(!running)return;timerEl.textContent=fmt(performance.now()-t0);raf=requestAnimationFrame(tick);})();
+}
+function stop(){
+  if(!running)return;
+  var ms=performance.now()-t0;running=false;cancelAnimationFrame(raf);
+  timerEl.textContent=fmt(ms);timerEl.classList.remove("run");stopBtn.disabled=true;
+  var desc=curT?"Teoria: "+curT:curD?"Cane: "+curD:ATTRS.map(function(a,i){return a.items[current[i]];}).join(" · ");
+  history.unshift({ms:ms,desc:desc});history=history.slice(0,6);
+  renderHist();hint.textContent="Fatto. Tocca il mazzo per pescare la prossima.";
+}
+function renderHist(){
+  var h=document.getElementById("hist"),rows=document.getElementById("rows");
+  h.hidden=false;rows.innerHTML="";
+  var avg=history.reduce(function(a,b){return a+b.ms;},0)/history.length;
+  history.forEach(function(x){
+    var r=document.createElement("div");r.className="row";
+    var a=document.createElement("span");a.textContent=x.desc;
+    var b=document.createElement("span");b.textContent=fmt(x.ms)+" s";
+    r.appendChild(a);r.appendChild(b);rows.appendChild(r);
+  });
+  var m=document.createElement("div");m.className="row";
+  m.innerHTML="<span>Media</span><span></span>";m.lastChild.textContent=fmt(avg)+" s";rows.appendChild(m);
+}
+deckEl.addEventListener("click",draw);
+deckEl.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();draw();}});
+stopBtn.addEventListener("click",stop);
+shuffle();shuffleT();shuffleD();updateLeft();
+})();
+</script>
+</body>
+</html>
