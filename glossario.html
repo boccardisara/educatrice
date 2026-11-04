@@ -12,51 +12,52 @@ body { margin: 0; background: var(--bg); color: var(--navy); font-family: Inter,
 body.modal-open { overflow: hidden; } /* Blocca lo sfondo quando la card è aperta */
 button { font: inherit; }
 
-.app { max-width: 620px; margin: 0 auto; height: 100dvh; display: flex; flex-direction: column; padding: 22px 18px calc(24px + env(safe-area-inset-bottom)); }
-header { text-align: center; padding: 8px 0 18px; flex-shrink: 0; }
-
-/* Intestazione con freccia indietro */
-.header-top { position: relative; display: flex; justify-content: center; align-items: center; margin-bottom: 8px; }
-.back-home { position: absolute; left: 0; text-decoration: none; color: var(--orange); font-size: 26px; font-weight: bold; top: 50%; transform: translateY(-50%); padding: 5px 15px 5px 0; line-height: 1; }
+.app { max-width: 620px; margin: 0 auto; height: 100dvh; display: flex; flex-direction: column; padding: 22px 18px calc(65px + env(safe-area-inset-bottom)); }
+header { text-align: center; padding: 5px 0 10px; flex-shrink: 0; }
 h1 { margin: 0; color: var(--orange); font-size: 30px; line-height: 1.1; font-weight: 850; letter-spacing: -.8px; }
-.subtitle { margin: 0; color: var(--navy); font-size: 14px; }
 
 /* Barra lettere scorrevole fluida */
 .letter-window { 
   overflow-x: auto; 
   scroll-behavior: smooth; 
-  scrollbar-width: none; /* Nasconde scrollbar Firefox */
+  scrollbar-width: none;
   padding: 10px 0 15px 0;
-  margin: 0 -18px; /* Estende ai bordi dello schermo */
+  margin: 0 -18px;
   flex-shrink: 0;
 }
-.letter-window::-webkit-scrollbar { display: none; } /* Nasconde scrollbar Chrome/Safari */
+.letter-window::-webkit-scrollbar { display: none; }
 .letters { 
   display: flex; 
   align-items: center; 
   gap: 10px; 
   width: max-content; 
-  /* Padding per permettere alla prima e ultima lettera di essere centrate */
-  padding: 0 calc(50vw - 21px); 
+  padding: 0 18px;
 }
-@media(min-width: 620px) { .letters { padding: 0 calc(310px - 21px); } }
 
-.letter { flex: 0 0 42px; height: 43px; border: 0; border-radius: 12px; background: #f2f3f4; color: #89919b; font-weight: 800; font-size: 17px; cursor: pointer; transition: all .2s ease; }
+.letter { flex: 0 0 42px; height: 43px; border: 0; border-radius: 12px; background: #f2f3f4; color: #89919b; font-weight: 800; font-size: 17px; cursor: pointer; transition: all .2s ease; display:flex; justify-content:center; align-items:center; }
 .letter.active { background: var(--orange); color: #fff; transform: scale(1.15); box-shadow: 0 5px 13px #ef6b0b40; }
+
+/* Rettangoli grigi vuoti (placeholder) */
+.letter.empty { background: #f2f3f4; pointer-events: none; opacity: 0.5; }
 
 /* Lista verticale completa */
 .list { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding-bottom: 20px; scrollbar-width: thin; scroll-behavior: smooth; }
 .letter-section { margin-bottom: 25px; }
 
-/* Intestazione sezione lettera (Centrata) */
-.section-head { display: flex; flex-direction: column; justify-content: center; align-items: center; border-top: 1px solid var(--line); padding: 15px 2px 10px; position: sticky; top: 0; background: var(--bg); z-index: 10; gap: 4px; }
+/* Intestazione sezione lettera (Centrata, senza riga sopra) */
+.section-head { display: flex; justify-content: center; align-items: center; padding: 15px 2px 10px; position: sticky; top: 0; background: var(--bg); z-index: 10; }
 .section-head strong { font-size: 22px; color: var(--orange); line-height: 1; }
-.count { font-size: 11px; color: var(--muted); line-height: 1; font-weight: 600; }
 
-/* Voci centrate */
-.item { width: 100%; background: #fff; border: 0; border-bottom: 1px solid var(--line); padding: 15px 3px; display: flex; justify-content: center; align-items: center; text-align: center; color: var(--navy); font-weight: 680; font-size: 15px; position: relative; cursor: pointer; }
+/* Voci centrate (con riga sotto) */
+.item { width: 100%; background: #fff; border: 0; border-bottom: 1px solid var(--line); padding: 15px 3px; display: flex; justify-content: center; align-items: center; text-align: center; color: var(--navy); font-weight: 680; font-size: 15px; cursor: pointer; }
 .item:active { background: #fff7f1; }
-.arrow { color: var(--orange); font-size: 21px; line-height: 1; position: absolute; right: 10px; }
+
+/* Barra di Navigazione Bassa Orizzontale */
+.bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; border-top: 1px solid var(--line); display: flex; justify-content: space-around; padding-bottom: env(safe-area-inset-bottom); z-index: 9000; box-shadow: 0 -4px 15px rgba(29, 45, 80, 0.05); height: 56px; }
+.nav-item { flex: 1; color: var(--muted); text-decoration: none; font-size: 15px; font-weight: 750; display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 8px; -webkit-tap-highlight-color: transparent; }
+.nav-item.active { color: var(--orange); }
+.nav-icon { font-size: 20px; line-height: 1; filter: grayscale(100%) opacity(0.6); transition: all 0.2s; }
+.nav-item.active .nav-icon { filter: grayscale(0%) opacity(1); transform: scale(1.1); }
 
 /* Overlay Card */
 #detail { position: fixed; inset: 0; background: rgba(29, 45, 80, 0.65); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 9999; display: flex; flex-direction: column; justify-content: center; padding: 20px; overflow-y: auto; opacity: 1; transition: opacity 0.2s ease; }
@@ -77,7 +78,7 @@ h1 { margin: 0; color: var(--orange); font-size: 30px; line-height: 1.1; font-we
 .more-detail { border-top: 1px solid var(--line); margin-top: 14px; padding-top: 15px; font-size: 14px; line-height: 1.55; }
 .more-detail h3 { font-size: 16px; margin: 0 0 8px; }
 .more-detail p { margin: 0 0 12px; }
-.back-bottom { width: 100%; border: 1px solid #e8e8e8; border-radius: 14px; background: #fff; color: var(--navy); font-weight: 800; padding: 15px; box-shadow: 0 5px 15px #1d2d5010; margin-top: 20px; cursor: pointer; }
+.back-bottom { width: 100%; border: 1px solid #e8e8e8; border-radius: 14px; background: #fff; color: var(--navy); font-weight: 800; padding: 15px; box-shadow: 0 5px 15px #1d2d5010; margin-top: 20px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 6px; }
 .hidden { display: none !important; }
 
 @media(min-width: 600px) { .app { padding-top: 32px; } .card { min-height: 390px; padding: 30px; } .card h2 { font-size: 32px; } }
@@ -86,11 +87,7 @@ h1 { margin: 0; color: var(--orange); font-size: 30px; line-height: 1.1; font-we
 <body>
 <main class="app" id="index">
   <header>
-    <div class="header-top">
-      <a href="index.html" class="back-home">←</a>
-      <h1>Glossario 🐾</h1>
-    </div>
-    <p class="subtitle">Parole, concetti e strumenti della cinofilia.</p>
+    <h1>Glossario</h1>
   </header>
   
   <div class="letter-window" id="letterWindow">
@@ -99,6 +96,16 @@ h1 { margin: 0; color: var(--orange); font-size: 30px; line-height: 1.1; font-we
   
   <div class="list" id="list"></div>
 </main>
+
+<!-- Barra di navigazione bassa -->
+<nav class="bottom-nav">
+  <a href="glossario.html" class="nav-item active">
+    <span class="nav-icon">📖</span> Glossario
+  </a>
+  <a href="quiz.html" class="nav-item">
+    <span class="nav-icon">🃏</span> Quiz
+  </a>
+</nav>
 
 <section id="detail" class="hidden">
   <div class="card-wrapper">
@@ -112,14 +119,13 @@ h1 { margin: 0; color: var(--orange); font-size: 30px; line-height: 1.1; font-we
         <div id="expanded" class="more-detail hidden"></div>
       </article>
     </div>
-    <button class="back-bottom" id="backBottom">CHIUDI CARD</button>
+    <button class="back-bottom" id="backBottom"><span style="font-size: 18px;">✕</span> CHIUDI CARD</button>
   </div>
 </section>
 
 <script>
 const terms = ["Ancoraggio","ATP (Aggressività Territoriale e Protettiva)","Base sicura","Centripetazione","CLASS","CONNECT","Deprivazione sensoriale","distress","EAM","Educazione mentale","Empatia: sentirsi sentiti","Esperienza di apprendimento mediato","Etogramma","Eustress","Fading","Finito","Flessibilità cognitiva","HBG (Human body Gym)","Honor Code","In Take Session","Indice motivazionale","Legge della Varietà indispensabile","Legge dell’effetto di Thorndike","Legame di attaccamento","Livelli cognitivi","Mindfulness: presenza mentale","Modellamento","Piano di sviluppo prossimale","Piano di sviluppo potenziale","Prossemica","Puppy Class","RDI (registro dialogico interattivo)","SCORE","Set neurale","Spirale dei bisogni","Splitting","Start line","Strange Situation","Stato di flusso","TOTE (Test Operate Test Exit)","Ttouch","Zoofarmacognosi","ZSP"];
 
-// Ordina e raggruppa i termini per lettera
 terms.sort((a, b) => a.localeCompare(b, 'it', { sensitivity: 'base' }));
 const grouped = {};
 terms.forEach(t => {
@@ -133,12 +139,16 @@ const lettersEl = document.getElementById("letters");
 const listEl = document.getElementById("list");
 const letterWindow = document.getElementById("letterWindow");
 let activeLetter = null;
-let isProgrammaticScroll = false; // Evita conflitti scroll list/lettere
+let isProgrammaticScroll = false;
 
-// Inizializza interfaccia
 function initUI() {
+  for(let i=0; i<8; i++) {
+    const d = document.createElement("div");
+    d.className = "letter empty";
+    lettersEl.appendChild(d);
+  }
+
   availableLetters.forEach(l => {
-    // Crea bottoni lettere
     const btn = document.createElement("button");
     btn.className = "letter";
     btn.id = "btn-" + l;
@@ -146,56 +156,55 @@ function initUI() {
     btn.addEventListener("click", () => scrollToSection(l));
     lettersEl.appendChild(btn);
 
-    // Crea sezioni lista
     const sec = document.createElement("div");
     sec.className = "letter-section";
     sec.id = "sec-" + l;
     sec.setAttribute("data-letter", l);
     
-    sec.innerHTML = `<div class="section-head"><strong>${l}</strong><span class="count">${grouped[l].length} voci</span></div>`;
+    sec.innerHTML = `<div class="section-head"><strong>${l}</strong></div>`;
     
     grouped[l].forEach(t => {
       const itemBtn = document.createElement("button");
       itemBtn.className = "item";
-      itemBtn.innerHTML = `<span>${t}</span><span class="arrow">›</span>`;
+      itemBtn.innerHTML = `<span>${t}</span>`;
       itemBtn.addEventListener("click", () => openCard(t));
       sec.appendChild(itemBtn);
     });
     listEl.appendChild(sec);
   });
+
+  for(let i=0; i<8; i++) {
+    const d = document.createElement("div");
+    d.className = "letter empty";
+    lettersEl.appendChild(d);
+  }
 }
 
 function setActiveLetter(l) {
   if (activeLetter === l || !l) return;
-  
   if (activeLetter) {
     const oldBtn = document.getElementById("btn-" + activeLetter);
     if (oldBtn) oldBtn.classList.remove("active");
   }
-  
   activeLetter = l;
   const newBtn = document.getElementById("btn-" + l);
   if (newBtn) {
     newBtn.classList.add("active");
-    // Centra fluidamente la lettera nella barra orizzontale
     const shift = newBtn.offsetLeft + (newBtn.offsetWidth / 2) - (letterWindow.clientWidth / 2);
     letterWindow.scrollTo({ left: shift, behavior: 'smooth' });
   }
 }
 
-// Scroll fluido alla sezione corrispondente
 function scrollToSection(l) {
   isProgrammaticScroll = true;
   setActiveLetter(l);
   const section = document.getElementById("sec-" + l);
   if (section) {
-    // Centra visivamente la sezione togliendo un po' di margine superiore
     listEl.scrollTo({ top: section.offsetTop - listEl.offsetTop, behavior: 'smooth' });
   }
   setTimeout(() => { isProgrammaticScroll = false; }, 800);
 }
 
-// Intersection Observer per aggiornare la lettera attiva scorrendo la lista in verticale
 const observer = new IntersectionObserver(entries => {
   if (isProgrammaticScroll) return;
   entries.forEach(entry => {
@@ -206,7 +215,6 @@ const observer = new IntersectionObserver(entries => {
   });
 }, { root: listEl, rootMargin: "-10px 0px -80% 0px" });
 
-// Gestione Card Overlay
 function openCard(t) {
   document.body.classList.add("modal-open");
   document.getElementById("detail").classList.remove("hidden");
@@ -227,7 +235,6 @@ function closeCard() {
 }
 
 document.getElementById("backBottom").onclick = closeCard;
-// Chiudi se si clicca fuori dalla card
 document.getElementById("detail").addEventListener('click', function(e) {
   if (e.target === this) closeCard();
 });
@@ -245,7 +252,6 @@ document.getElementById("more").onclick = () => {
   <p><b>DA DENTRO VERSO FUORI</b><br>L'obiettivo non è semplicemente modificare un comportamento esterno, ma favorire un cambiamento interno.</p>` : "";
 };
 
-// Avvio
 initUI();
 document.querySelectorAll(".letter-section").forEach(sec => observer.observe(sec));
 setTimeout(() => setActiveLetter(availableLetters[0]), 100);
