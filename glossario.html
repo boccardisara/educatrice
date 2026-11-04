@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<title>Glossario · Educazione cinofila</title>
+<style>
+:root { --orange: #ef6b0b; --orange-dark: #c94d12; --navy: #1d2d50; --muted: #89919b; --line: #e8e8e5; --bg: #fff; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--navy); font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif; }
+body.modal-open { overflow: hidden; } /* Blocca lo sfondo quando la card è aperta */
+button { font: inherit; }
+
+.app { max-width: 620px; margin: 0 auto; height: 100dvh; display: flex; flex-direction: column; padding: 22px 18px calc(24px + env(safe-area-inset-bottom)); }
+header { text-align: center; padding: 8px 0 18px; flex-shrink: 0; }
+h1 { margin: 0; color: var(--orange); font-size: 30px; line-height: 1.1; font-weight: 850; letter-spacing: -.8px; }
+.subtitle { margin: 8px 0 0; color: var(--navy); font-size: 14px; }
+.letter-label { font-size: 10px; letter-spacing: 1.3px; font-weight: 800; color: var(--muted); margin: 0 0 8px 3px; flex-shrink: 0; }
+
+/* Barra lettere scorrevole fluida */
+.letter-window { 
+  overflow-x: auto; 
+  scroll-behavior: smooth; 
+  scrollbar-width: none; /* Nasconde scrollbar Firefox */
+  padding: 10px 0;
+  margin: 0 -18px; /* Estende ai bordi dello schermo */
+  flex-shrink: 0;
+}
+.letter-window::-webkit-scrollbar { display: none; } /* Nasconde scrollbar Chrome/Safari */
+.letters { 
+  display: flex; 
+  align-items: center; 
+  gap: 10px; 
+  width: max-content; 
+  /* Padding per permettere alla prima e ultima lettera di essere centrate */
+  padding: 0 calc(50vw - 21px); 
+}
+@media(min-width: 620px) { .letters { padding: 0 calc(310px - 21px); } }
+
+.letter { flex: 0 0 42px; height: 43px; border: 0; border-radius: 12px; background: #f2f3f4; color: #89919b; font-weight: 800; font-size: 17px; cursor: pointer; transition: all .2s ease; }
+.letter.active { background: var(--orange); color: #fff; transform: scale(1.15); box-shadow: 0 5px 13px #ef6b0b40; }
+
+.hint { text-align: center; color: var(--muted); font-size: 11px; margin: 5px 0 13px; flex-shrink: 0; }
+
+/* Lista verticale completa */
+.list { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding-bottom: 20px; scrollbar-width: thin; scroll-behavior: smooth; }
+.letter-section { margin-bottom: 25px; }
+.section-head { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--line); padding: 15px 2px 7px; position: sticky; top: 0; background: var(--bg); z-index: 10; }
+.section-head strong { font-size: 19px; color: var(--orange); }
+.count { font-size: 12px; color: var(--muted); }
+
+/* Voci centrate */
+.item { width: 100%; background: #fff; border: 0; border-bottom: 1px solid var(--line); padding: 15px 3px; display: flex; justify-content: center; align-items: center; text-align: center; color: var(--navy); font-weight: 680; font-size: 15px; position: relative; cursor: pointer; }
+.item:active { background: #fff7f1; }
+.arrow { color: var(--orange); font-size: 21px; line-height: 1; position: absolute; right: 10px; }
+
+/* Overlay Card */
+#detail { position: fixed; inset: 0; background: rgba(29, 45, 80, 0.65); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 9999; display: flex; flex-direction: column; justify-content: center; padding: 20px; overflow-y: auto; opacity: 1; transition: opacity 0.2s ease; }
+#detail.hidden { opacity: 0; pointer-events: none; }
+
+.card-wrapper { max-width: 500px; width: 100%; margin: auto; }
+.card-stack { position: relative; padding: 0 8px 11px 0; }
+.card-stack:before, .card-stack:after { content: ""; position: absolute; inset: 9px 0 0 9px; background: var(--orange-dark); border-radius: 25px; z-index: 0; box-shadow: 0 9px 20px #1d2d5018; }
+.card-stack:after { inset: 5px 4px 5px 4px; background: #e45d0b; z-index: 1; }
+.card { position: relative; z-index: 2; background: #fff; border: 1px solid #f0eee9; border-radius: 25px; padding: 22px 20px 20px; min-height: 340px; box-shadow: 0 14px 32px #1d2d5030; }
+
+.card-kicker { color: var(--orange); font-size: 10px; font-weight: 850; letter-spacing: 1.3px; }
+.card h2 { font-size: 27px; line-height: 1.12; letter-spacing: -.6px; margin: 13px 0 17px; color: var(--navy); }
+.rule { height: 4px; width: 44px; border-radius: 4px; background: var(--orange); margin-bottom: 19px; }
+.def-label { font-size: 10px; letter-spacing: 1.2px; color: var(--muted); font-weight: 850; margin-bottom: 8px; }
+.definition { font-size: 16px; line-height: 1.55; margin: 0; color: var(--navy); }
+.more { display: inline-flex; align-items: center; gap: 7px; border: 0; background: none; color: var(--orange); font-weight: 850; padding: 18px 0 4px; cursor: pointer; }
+.more-detail { border-top: 1px solid var(--line); margin-top: 14px; padding-top: 15px; font-size: 14px; line-height: 1.55; }
+.more-detail h3 { font-size: 16px; margin: 0 0 8px; }
+.more-detail p { margin: 0 0 12px; }
+.back-bottom { width: 100%; border: 1px solid #e8e8e8; border-radius: 14px; background: #fff; color: var(--navy); font-weight: 800; padding: 15px; box-shadow: 0 5px 15px #1d2d5010; margin-top: 20px; cursor: pointer; }
+.hidden { display: none !important; }
+
+@media(min-width: 600px) { .app { padding-top: 32px; } .card { min-height: 390px; padding: 30px; } .card h2 { font-size: 32px; } }
+</style>
+</head>
+<body>
+<main class="app" id="index">
+  <header><h1>Glossario 🐾</h1><p class="subtitle">Parole, concetti e strumenti della cinofilia.</p></header>
+  <p class="letter-label">SCORRI LE LETTERE</p>
+  
+  <div class="letter-window" id="letterWindow">
+    <div class="letters" id="letters"></div>
+  </div>
+  <p class="hint">La lettera al centro è quella selezionata</p>
+  
+  <div class="list" id="list"></div>
+</main>
+
+<section id="detail" class="hidden">
+  <div class="card-wrapper">
+    <div class="card-stack">
+      <article class="card">
+        <div class="card-kicker">GLOSSARIO · EDUCAZIONE CINOFILA</div>
+        <h2 id="termTitle"></h2><div class="rule"></div>
+        <div class="def-label">DEFINIZIONE</div>
+        <div id="definition" class="definition"></div>
+        <button class="more hidden" id="more">Di più <span id="moreIcon">⌄</span></button>
+        <div id="expanded" class="more-detail hidden"></div>
+      </article>
+    </div>
+    <button class="back-bottom" id="backBottom">CHIUDI CARD</button>
+  </div>
+</section>
+
+<script>
+const terms = ["Ancoraggio","ATP (Aggressività Territoriale e Protettiva)","Base sicura","Centripetazione","CLASS","CONNECT","Deprivazione sensoriale","distress","EAM","Educazione mentale","Empatia: sentirsi sentiti","Esperienza di apprendimento mediato","Etogramma","Eustress","Fading","Finito","Flessibilità cognitiva","HBG (Human body Gym)","Honor Code","In Take Session","Indice motivazionale","Legge della Varietà indispensabile","Legge dell’effetto di Thorndike","Legame di attaccamento","Livelli cognitivi","Mindfulness: presenza mentale","Modellamento","Piano di sviluppo prossimale","Piano di sviluppo potenziale","Prossemica","Puppy Class","RDI (registro dialogico interattivo)","SCORE","Set neurale","Spirale dei bisogni","Splitting","Start line","Strange Situation","Stato di flusso","TOTE (Test Operate Test Exit)","Ttouch","Zoofarmacognosi","ZSP"];
+
+// Ordina e raggruppa i termini per lettera
+terms.sort((a, b) => a.localeCompare(b, 'it', { sensitivity: 'base' }));
+const grouped = {};
+terms.forEach(t => {
+  const l = t.charAt(0).toUpperCase();
+  if(!grouped[l]) grouped[l] = [];
+  grouped[l].push(t);
+});
+const availableLetters = Object.keys(grouped).sort();
+
+const lettersEl = document.getElementById("letters");
+const listEl = document.getElementById("list");
+const letterWindow = document.getElementById("letterWindow");
+let activeLetter = null;
+let isProgrammaticScroll = false; // Evita conflitti scroll list/lettere
+
+// Inizializza interfaccia
+function initUI() {
+  availableLetters.forEach(l => {
+    // Crea bottoni lettere
+    const btn = document.createElement("button");
+    btn.className = "letter";
+    btn.id = "btn-" + l;
+    btn.textContent = l;
+    btn.addEventListener("click", () => scrollToSection(l));
+    lettersEl.appendChild(btn);
+
+    // Crea sezioni lista
+    const sec = document.createElement("div");
+    sec.className = "letter-section";
+    sec.id = "sec-" + l;
+    sec.setAttribute("data-letter", l);
+    
+    sec.innerHTML = `<div class="section-head"><strong>${l}</strong><span class="count">${grouped[l].length} voci</span></div>`;
+    
+    grouped[l].forEach(t => {
+      const itemBtn = document.createElement("button");
+      itemBtn.className = "item";
+      itemBtn.innerHTML = `<span>${t}</span><span class="arrow">›</span>`;
+      itemBtn.addEventListener("click", () => openCard(t));
+      sec.appendChild(itemBtn);
+    });
+    listEl.appendChild(sec);
+  });
+}
+
+function setActiveLetter(l) {
+  if (activeLetter === l || !l) return;
+  
+  if (activeLetter) {
+    const oldBtn = document.getElementById("btn-" + activeLetter);
+    if (oldBtn) oldBtn.classList.remove("active");
+  }
+  
+  activeLetter = l;
+  const newBtn = document.getElementById("btn-" + l);
+  if (newBtn) {
+    newBtn.classList.add("active");
+    // Centra fluidamente la lettera nella barra orizzontale
+    const shift = newBtn.offsetLeft + (newBtn.offsetWidth / 2) - (letterWindow.clientWidth / 2);
+    letterWindow.scrollTo({ left: shift, behavior: 'smooth' });
+  }
+}
+
+// Scroll fluido alla sezione corrispondente
+function scrollToSection(l) {
+  isProgrammaticScroll = true;
+  setActiveLetter(l);
+  const section = document.getElementById("sec-" + l);
+  if (section) {
+    // Centra visivamente la sezione togliendo un po' di margine superiore
+    listEl.scrollTo({ top: section.offsetTop - listEl.offsetTop, behavior: 'smooth' });
+  }
+  setTimeout(() => { isProgrammaticScroll = false; }, 800);
+}
+
+// Intersection Observer per aggiornare la lettera attiva scorrendo la lista in verticale
+const observer = new IntersectionObserver(entries => {
+  if (isProgrammaticScroll) return;
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const l = entry.target.getAttribute("data-letter");
+      setActiveLetter(l);
+    }
+  });
+}, { root: listEl, rootMargin: "-10px 0px -80% 0px" });
+
+// Gestione Card Overlay
+function openCard(t) {
+  document.body.classList.add("modal-open");
+  document.getElementById("detail").classList.remove("hidden");
+  document.getElementById("termTitle").textContent = t;
+  
+  const known = t === "Educazione mentale";
+  document.getElementById("definition").textContent = known ? "L’educazione mentale è un processo educativo che mira a produrre evoluzioni interne nel cane, aumentando consapevolezza, competenze e capacità di ragionare sulle situazioni." : "Definizione in preparazione.";
+  
+  const more = document.getElementById("more");
+  more.classList.toggle("hidden", !known);
+  document.getElementById("expanded").classList.add("hidden");
+  document.getElementById("moreIcon").textContent = "⌄";
+}
+
+function closeCard() {
+  document.getElementById("detail").classList.add("hidden");
+  document.body.classList.remove("modal-open");
+}
+
+document.getElementById("backBottom").onclick = closeCard;
+// Chiudi se si clicca fuori dalla card
+document.getElementById("detail").addEventListener('click', function(e) {
+  if (e.target === this) closeCard();
+});
+
+let expanded = false;
+document.getElementById("more").onclick = () => {
+  expanded = !expanded;
+  const el = document.getElementById("expanded");
+  el.classList.toggle("hidden", !expanded);
+  document.getElementById("moreIcon").textContent = expanded ? "⌃" : "⌄";
+  el.innerHTML = expanded ? `<h3>Guardare oltre il comportamento</h3>
+  <p>Per comprendere davvero il cane non basta osservare ciò che fa. Occorre andare oltre il comportamento visibile e interrogarsi su ciò che lo genera.</p>
+  <p><b>BACKGROUND</b><br>Comprende la storia del cane e i suoi bisogni: le esperienze che ha vissuto e ciò di cui necessita.</p>
+  <p><b>DOTAZIONI</b><br>Comprendono le sue capacità e le sue emozioni, cioè le risorse interne con cui affronta le diverse situazioni.</p>
+  <p><b>DA DENTRO VERSO FUORI</b><br>L'obiettivo non è semplicemente modificare un comportamento esterno, ma favorire un cambiamento interno.</p>` : "";
+};
+
+// Avvio
+initUI();
+document.querySelectorAll(".letter-section").forEach(sec => observer.observe(sec));
+setTimeout(() => setActiveLetter(availableLetters[0]), 100);
+</script>
+</body>
+</html>
