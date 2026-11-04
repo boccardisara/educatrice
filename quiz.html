@@ -239,5 +239,15 @@ stopBtn.addEventListener("click",stop);
 shuffle();shuffleT();shuffleD();updateLeft();
 })();
 </script>
+<!-- Barra di navigazione bassa orizzontale -->
+<nav style="position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; border-top: 1px solid #e8e1d6; display: flex; justify-content: space-around; padding-bottom: env(safe-area-inset-bottom); z-index: 9000; box-shadow: 0 -4px 15px rgba(27,43,75,.05); font-family: 'Raleway', sans-serif; height: 56px;">
+  <a href="glossario.html" style="flex: 1; color: #7a8497; text-decoration: none; font-size: 15px; font-weight: 750; display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 8px; -webkit-tap-highlight-color: transparent;">
+    <span style="font-size: 20px; line-height: 1; filter: grayscale(100%) opacity(0.6); transition: all 0.2s;">📖</span> Glossario
+  </a>
+  <a href="quiz.html" style="flex: 1; color: #ec6b12; text-decoration: none; font-size: 15px; font-weight: 750; display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 8px; -webkit-tap-highlight-color: transparent;">
+    <span style="font-size: 20px; line-height: 1; filter: grayscale(0%) opacity(1); transform: scale(1.1); transition: all 0.2s;">🃏</span> Quiz
+  </a>
+</nav>
+
 </body>
 </html>
