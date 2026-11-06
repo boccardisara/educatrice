@@ -215,16 +215,76 @@ const observer = new IntersectionObserver(entries => {
   });
 }, { root: listEl, rootMargin: "-10px 0px -80% 0px" });
 
+// 1. Dizionario delle Definizioni (Testo principale)
+const dictionary = {
+  "Educazione mentale": "L’educazione mentale è un processo educativo che mira a produrre evoluzioni interne nel cane, aumentando consapevolezza, competenze e capacità di ragionare sulle situazioni.",
+  "Livelli cognitivi": "Sono uno strumento che abbiamo a disposizione per analizzare in profondità cosa sta succedendo nel cane, attraverso l'osservazione di ambiente, comportamento, capacità, motivazioni, bisogni. Lavorando sui livelli interni (emozioni, capacità, motivazioni e bisogni) si arriva ad influenzare e poter lavorare sui livelli esterni (ambiente e comportamento)."
+};
+
+// 2. Dizionario degli Approfondimenti (Sezione "Di più")
+const detailsDictionary = {
+  "Educazione mentale": `<h3>Guardare oltre il comportamento</h3>
+  <p>Per comprendere davvero il cane non basta osservare ciò che fa. Occorre andare oltre il comportamento visibile e interrogarsi su ciò che lo genera.</p>
+  <p><b>BACKGROUND</b><br>Comprende la storia del cane e i suoi bisogni: le esperienze che ha vissuto e ciò di cui necessita.</p>
+  <p><b>DOTAZIONI</b><br>Comprendono le sue capacità e le sue emozioni, cioè le risorse interne con cui affronta le diverse situazioni.</p>
+  <p><b>DA DENTRO VERSO FUORI</b><br>L'obiettivo non è semplicemente modificare un comportamento esterno, ma favorire un cambiamento interno.</p>`,
+  
+  "Livelli cognitivi": `<p>I Livelli Logici (o Neurologici) sono un modello elaborato dallo psicologo Robert Dilts sulla base degli studi intrapresi da Gregory Bateson sulla cognizione e l’apprendimento. L’intento di Dilts era quello di semplificare il modo in cui la mente è organizzata, in funzione di interventi di psicoterapia e coaching.</p>
+  <p>Ogni livello corrisponde a una determinata neurologia:</p>
+  <ul style="padding-left: 20px;">
+    <li style="margin-bottom: 6px;"><b>Ambiente</b> - percezione - organi di senso - sistema nervoso periferico</li>
+    <li style="margin-bottom: 6px;"><b>Comportamento</b> - apparato muscolo scheletrico - cervelletto - sistema nervoso piramidale</li>
+    <li style="margin-bottom: 6px;"><b>Capacità</b> - neocorteccia</li>
+    <li style="margin-bottom: 6px;"><b>Motivazioni</b> - sistema limbico</li>
+    <li style="margin-bottom: 6px;"><b>Identità</b> - sistema endocrino, linfatico e immunitario</li>
+    <li style="margin-bottom: 6px;"><b>Relazioni</b> - neuroni specchio, mente collettiva, "campo"</li>
+  </ul>`
+  <h3> Analisi degli aspetti interni </h3>
+<h4>LO STATO EMOTIVO </h3>
+<p>Come sta il cane in quel momento? Lo stato emotivo influenza le scelte che il cane è in grado di prendere e condiziona la sua capacità di apprendere. Un cane in difficoltà emotiva non è disponibile all'apprendimento</p>
+ <ul style="padding-left: 20px;">
+  <li style="margin-bottom: 6px;">tranquillo</li>
+  <li style="margin-bottom: 6px;">attivato</li>
+  <li style="margin-bottom: 6px;">insicuro</li>
+  <li style="margin-bottom: 6px;">frustrato</li>
+  <li style="margin-bottom: 6px;">bloccato (freeze)</li> </ul>
+
+<h4>LE MOTIVAZIONI</h3>
+<p>le spinte che guidano il comportamento. Ad esempio:</p>
+ <ul style="padding-left: 20px;">
+  <li style="margin-bottom: 6px;">Esplorativa -> tira al guinzaglio, annusa intensamente = SI MUOVE NELL'AMBIENTE</li>
+  <li style="margin-bottom: 6px;">tira verso altri cani, salta addosso = CERCA CONTATTO</li>
+  <li style="margin-bottom: 6px;">fissare, inseguire, scatta alla vista di uccello = SI ATTIVA AL MOVIMENTO</li>
+</ul>
+
+<h4>I BISOGNI SODDISFATTI E NON</h3>
+<p>Ad esempio:</p>
+ <ul style="padding-left: 20px;">
+  <li style="margin-bottom: 6px;">bisogno di movimento non soddisfatto -> iperattività</li>
+  <li style="margin-bottom: 6px;">bisogno di sicurezza non soddisfatto -> evitamento / freeze</li>
+  <li style="margin-bottom: 6px;">bisogno relazionale non soddisfatto -> iper-attaccamento o richiesta continua</li>
+</ul>
+};
+
+let currentTerm = null; // Memorizza la parola attualmente aperta
+
 function openCard(t) {
+  currentTerm = t; // Salva la voce aperta
   document.body.classList.add("modal-open");
   document.getElementById("detail").classList.remove("hidden");
   document.getElementById("termTitle").textContent = t;
   
-  const known = t === "Educazione mentale";
-  document.getElementById("definition").textContent = known ? "L’educazione mentale è un processo educativo che mira a produrre evoluzioni interne nel cane, aumentando consapevolezza, competenze e capacità di ragionare sulle situazioni." : "Definizione in preparazione.";
+  // Imposta la definizione (se esiste, sennò fallback)
+  const hasDefinition = dictionary.hasOwnProperty(t);
+  document.getElementById("definition").textContent = hasDefinition ? dictionary[t] : "Definizione in preparazione.";
   
-  const more = document.getElementById("more");
-  more.classList.toggle("hidden", !known);
+  // Mostra o nascondi il pulsante "Di più" se c'è un approfondimento
+  const hasMoreDetails = detailsDictionary.hasOwnProperty(t);
+  const moreBtn = document.getElementById("more");
+  moreBtn.classList.toggle("hidden", !hasMoreDetails);
+  
+  // Resetta lo stato di espansione ogni volta che apri una nuova card
+  expanded = false;
   document.getElementById("expanded").classList.add("hidden");
   document.getElementById("moreIcon").textContent = "⌄";
 }
@@ -245,11 +305,9 @@ document.getElementById("more").onclick = () => {
   const el = document.getElementById("expanded");
   el.classList.toggle("hidden", !expanded);
   document.getElementById("moreIcon").textContent = expanded ? "⌃" : "⌄";
-  el.innerHTML = expanded ? `<h3>Guardare oltre il comportamento</h3>
-  <p>Per comprendere davvero il cane non basta osservare ciò che fa. Occorre andare oltre il comportamento visibile e interrogarsi su ciò che lo genera.</p>
-  <p><b>BACKGROUND</b><br>Comprende la storia del cane e i suoi bisogni: le esperienze che ha vissuto e ciò di cui necessita.</p>
-  <p><b>DOTAZIONI</b><br>Comprendono le sue capacità e le sue emozioni, cioè le risorse interne con cui affronta le diverse situazioni.</p>
-  <p><b>DA DENTRO VERSO FUORI</b><br>L'obiettivo non è semplicemente modificare un comportamento esterno, ma favorire un cambiamento interno.</p>` : "";
+  
+  // Stampa l'approfondimento corretto in base alla parola selezionata
+  el.innerHTML = (expanded && detailsDictionary[currentTerm]) ? detailsDictionary[currentTerm] : "";
 };
 
 initUI();
